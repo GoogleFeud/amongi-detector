@@ -51,6 +51,7 @@ impl Detector for AmongiDetector {
             (left 1 => down 2)
         ));
         let eye_1 = pixel.down(&analyzer.data, 1)?.right(&analyzer.data, 1)?;
+        // If the eye is the same color as it's body, then it's not really amongus
         if eye_1.2 == pixel.2 {
             return None;
         }
@@ -58,6 +59,11 @@ impl Detector for AmongiDetector {
         if eye_1.2 == eye_2.2 {
             res.push(eye_1);
             res.push(eye_2);
+            if let Some(amount) = self.results.remove(&pixel.2) {
+                self.results.insert(pixel.2, amount + 1);
+            } else {
+                self.results.insert(pixel.2, 1);
+            }
             Some(res)
         } else {
             None
