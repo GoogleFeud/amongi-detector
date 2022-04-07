@@ -42,6 +42,7 @@ impl Detector for AmongiDetector {
         if eye_1.2 == eye_2.2 {
             res.push(eye_1);
             res.push(eye_2);
+            res.push(pixel.clone());
             if let Some(amount) = self.results.remove(&pixel.2) {
                 self.results.insert(pixel.2, amount + 1);
             } else {

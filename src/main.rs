@@ -7,6 +7,6 @@ pub use detectors::amongi::AmongiDetector;
 fn main() {
     let analyzer = Analyzer::from("./place.png").expect("Image doesn't exist.");
     let mut amongi_collector = AmongiDetector::new();
-    analyzer.run(vec![&mut amongi_collector]);
-    println!("{:?}", amongi_collector.results);
+    let pixels = analyzer.run(vec![&mut amongi_collector]);
+    analyzer.save(pixels).save_with_format("./result.png", image::ImageFormat::Png).expect("Couldn't save image");
 }

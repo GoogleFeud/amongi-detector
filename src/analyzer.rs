@@ -1,5 +1,5 @@
 
-use image::{GenericImageView, DynamicImage, ImageError, Rgba};
+use image::{GenericImageView, DynamicImage, ImageError, Rgba, GenericImage, Pixel as ImagePixel};
 use crate::detector::Detector;
 
 pub type Pixel = (u32, u32, Rgba<u8>);
@@ -72,6 +72,14 @@ impl Analyzer {
             }
         };
         marked_pixels
+    }
+
+    pub fn save(&self, pixels: Vec<Pixel>) -> DynamicImage {
+        let mut new_image = self.data.brighten(-200);
+        for pixel in pixels {
+            new_image.put_pixel(pixel.0, pixel.1, pixel.2);
+        };
+        new_image
     }
 
 }
