@@ -21,15 +21,13 @@ macro_rules! cmp_pixel {
 pub(crate) use cmp_pixel;
 
 macro_rules! cmp_close_pixel {
-    ($analyzer: expr, $pixel: expr, $res: expr, $proximity: expr, ($(($($direction: ident $amount: expr)=>+, $proxy_minus: expr)),+)) => {
-        let mut proximity = $proximity;
+    ($analyzer: expr, $pixel: expr, $res: expr, $threshold: expr, $cmp: tt, ($(($($direction: ident $amount: expr)=>+, $proxy_minus: expr)),+)) => {
+        let mut threshold = $threshold;
         $(
             let upper = $pixel.$($direction(&$analyzer.data, $amount)?).+;
-            if $pixel.2 == upper.2 {
-                $res.push(upper);
-            } else {
-                proximity -= $proxy_minus;
-                if proximity < 1 {
+            if $pixel.2 $cmp upper.2 {
+                threshold -= $proxy_minus;
+                if threshold < 1 {
                     return None;
                 }
             }

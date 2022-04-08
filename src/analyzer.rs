@@ -1,7 +1,5 @@
 use image::{GenericImageView, DynamicImage, ImageError, Rgba, GenericImage};
 use crate::detector::Detector;
-use rayon::prelude::*;
-use std::sync::mpsc;
 
 pub type Pixel = (u32, u32, Rgba<u8>);
 

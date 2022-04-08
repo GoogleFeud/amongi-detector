@@ -1,4 +1,4 @@
-use crate::analyzer::{Analyzer, Pixel, MovePixel};
+use crate::{analyzer::{Analyzer, Pixel, MovePixel}, detector::cmp_close_pixel};
 use image::{Rgba};
 use std::collections::HashMap;
 use crate::detector::{Detector, cmp_pixel};
@@ -36,6 +36,26 @@ impl Detector for AmongiDetector {
             // Backpack / oxygen tank whatever
             (left 1 => down 1),
             (left 1 => down 2)
+        ));
+        cmp_close_pixel!(analyzer, pixel, res, 6, ==, (
+            // Pixels above head
+            (up 1, 1),
+            (right 1 => up 1, 1),
+            (right 2 => up 2, 1),
+            // Pixels around head
+            (right 3, 1),
+            (left 1, 1),
+            // Pixels right of the oxygen tank
+            (down 1 => left 2, 1),
+            (down 2 => left 2, 1),
+            (down 3 => left 1, 1),
+            // Checking pixels below both legs
+            (down 5, 1),
+            (down 5 => right 2, 1),
+            // Pixels in front
+            (down 2 => left 3, 1),
+            (down 3 => left 3, 1),
+            (down 4 => left 3, 1)
         ));
         res.push(eye_1);
         res.push(eye_2);
