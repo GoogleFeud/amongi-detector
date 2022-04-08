@@ -1,8 +1,8 @@
 
 use crate::analyzer::{Analyzer, Pixel};
 
-pub trait Detector: Sync + Send {
-    fn on_pixel(&self, analyzer: &Analyzer, pixel: &Pixel) -> Option<Vec<Pixel>>;
+pub trait Detector {
+    fn on_pixel(&mut self, analyzer: &Analyzer, pixel: &Pixel) -> Option<Vec<Pixel>>;
 }
 
 macro_rules! cmp_pixel {

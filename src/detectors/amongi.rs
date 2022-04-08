@@ -2,15 +2,13 @@ use crate::analyzer::{Analyzer, Pixel, MovePixel};
 use image::{Rgba};
 use std::collections::HashMap;
 use crate::detector::{Detector, cmp_pixel};
-use std::sync::Mutex;
-
 pub struct AmongiDetector {
-    pub results: Mutex<HashMap<Rgba<u8>, u32>>
+    pub results: HashMap<Rgba<u8>, u32>
 }
 
 impl Detector for AmongiDetector {
 
-    fn on_pixel(&self, analyzer: &Analyzer, pixel: &Pixel) -> Option<Vec<Pixel>> {
+    fn on_pixel(&mut self, analyzer: &Analyzer, pixel: &Pixel) -> Option<Vec<Pixel>> {
         let mut res: Vec<Pixel> = vec![];
         let eye_1 = pixel.down(&analyzer.data, 1)?.right(&analyzer.data, 1)?;
         let eye_2 = eye_1.right(&analyzer.data, 1)?;
@@ -42,11 +40,10 @@ impl Detector for AmongiDetector {
         res.push(eye_1);
         res.push(eye_2);
         res.push(*pixel);
-        let mut map = self.results.lock().unwrap();
-        if let Some(amount) = map.remove(&pixel.2) {
-            map.insert(pixel.2, amount + 1);
+        if let Some(amount) = self.results.remove(&pixel.2) {
+            self.results.insert(pixel.2, amount + 1);
         } else {
-            map.insert(pixel.2, 1);
+            self.results.insert(pixel.2, 1);
         }
         Some(res)
     }
@@ -56,7 +53,7 @@ impl AmongiDetector {
     
     pub fn new() -> Self {
         Self {
-            results: Mutex::new(HashMap::new())
+            results: HashMap::new()
         }
     }
 

@@ -1,6 +1,7 @@
 use image::{GenericImageView, DynamicImage, ImageError, Rgba, GenericImage};
 use crate::detector::Detector;
 use rayon::prelude::*;
+use std::sync::mpsc;
 
 pub type Pixel = (u32, u32, Rgba<u8>);
 
@@ -62,17 +63,16 @@ impl Analyzer {
         })
     }
 
-    pub fn run(&self, detectors: Vec<&dyn Detector>) -> Vec<Pixel> {
-        self.data.pixels().par_bridge().fold_with(vec![], |mut a: Vec<Pixel>, pixel| {
-            for detector in detectors.iter() {
-                // If the detector returns `Some`, then we add the returned pixels to
-                // the "marked_pixels" vector
+    pub fn run(&self, mut detectors: Vec<&mut dyn Detector>) -> Vec<Pixel> {
+        let mut marked_pixels: Vec<Pixel> = vec![];
+        for pixel in self.data.pixels() {
+            for detector in detectors.iter_mut() {
                 if let Some(mut pixels) = detector.on_pixel(self, &pixel) {
-                    a.append(&mut pixels);
+                    marked_pixels.append(&mut pixels);
                 }
             }
-            a
-        }).flatten().collect()
+        };
+        marked_pixels
     }
 
     pub fn highlight(&self, pixels: Vec<Pixel>) -> DynamicImage {
